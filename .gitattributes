@@ -1,0 +1,24 @@
+# Normalize line endings for scripts
+*.cs text eol=lf
+*.shader text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+
+# Treat images and audio files as binary (no merging)
+*.png binary
+*.jpg binary
+*.ogg binary
+*.mp3 binary
+*.wav binary
+*.ttf binary
+
+# Prevent merge conflicts in Unity scene & prefab files
+*.unity merge=unityyaml
+*.prefab merge=unityyaml
+*.asset merge=unityyaml
+
+# Use Git LFS for large files
+*.psd filter=lfs diff=lfs merge=lfs
+*.mp4 filter=lfs diff=lfs merge=lfs
+*.fbx filter=lfs diff=lfs merge=lfs
+
