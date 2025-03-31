@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Enum;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Data
 {

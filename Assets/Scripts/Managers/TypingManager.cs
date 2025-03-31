@@ -5,75 +5,77 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class TypingManager : MonoBehaviour
+    public class TypingManager : Singleton<TypingManager>
     {
-        public static TypingManager Instance { get; private set; }
-        [HideInInspector] public TextMeshProUGUI textDisplay;
-        public float typingSpeed = 0.05f;
-        public float delayBetweenMessages = 1f;
+        public float typingSpeed = 0.03f;
+        public float delayBetweenMessages = 0.5f;
 
-        public int QueueCount => textQueue.Count;
-        private Queue<string> textQueue = new Queue<string>();
-
-        private string currentText;
-        private bool isTyping = false;
-
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
+        private Queue<string> _textQueue = new Queue<string>();
+        private TextMeshProUGUI _textDisplay;
+        private string _currentText;
+        private bool _isTyping;
 
         private void Update()
         {
-            if (textQueue.Count > 0 && textDisplay && !isTyping)
+            if (HasNext() && Input.anyKeyDown)
             {
-                StartCoroutine(TypeText(textQueue.Dequeue()));
+                SkipTyping();
+            }
+
+            if (_textDisplay && HasNext() && !IsTyping())
+            {
+                StartCoroutine(TypeText(_textQueue.Dequeue()));
             }
         }
 
         public void EnqueueText(string text)
         {
-            textQueue.Enqueue(text);
+            _textQueue.Enqueue(text);
         }
 
-        private IEnumerator TypeText(string text)
+        // Event handler for the "TypeText" event that triggers the typing animation
+        public IEnumerator TypeText(string text)
         {
-            isTyping = true;
-            textDisplay.text = "";
-            currentText = text;
+            _isTyping = true;
+            _textDisplay.text = "";
+            _currentText = text;
 
-            foreach (char letter in text.ToCharArray())
+            foreach (char letter in text)
             {
-                textDisplay.text += letter;
-
+                _textDisplay.text += letter;
                 yield return new WaitForSeconds(typingSpeed);
             }
 
             yield return new WaitForSeconds(delayBetweenMessages);
-            isTyping = false;
+            _isTyping = false;
         }
 
-        public void SkipTyping()
+        // Initializes the text display for the current UI for the typing animation
+        public void InitializeTextDisplay(string newUI)
         {
-            if (isTyping)
+            _textDisplay = Utilities.FindChild($"Overlay/{newUI}/Sentence")
+                .GetComponent<TextMeshProUGUI>();
+        }
+
+        private void SkipTyping()
+        {
+            if (_isTyping)
             {
                 StopAllCoroutines();
-                textDisplay.text = currentText;
-                isTyping = false;
+                _textDisplay.text = _currentText;
+                _isTyping = false;
             }
         }
 
+        public bool HasNext()
+        {
+            return _textQueue.Count > 0;
+        }
+
+        // Checks if the typing animation is currently running
         public bool IsTyping()
         {
-            return isTyping;
+            return _isTyping;
         }
     }
 }

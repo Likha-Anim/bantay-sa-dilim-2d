@@ -12,12 +12,35 @@ namespace Data
         StatusEffect StatusEffect { get; set; }
     }
 
-    [Serializable]
     public abstract class Item : ScriptableObject, IItem
     {
-        public string ItemName { get; set; }
-        public Color ItemColor { get; set; }
-        public Sprite ItemSprite { get; set; }
-        public StatusEffect StatusEffect { get; set; }
+        [SerializeField] private string itemName;
+        [SerializeField] private Color itemColor;
+        [SerializeField] private Sprite itemSprite;
+        [SerializeField] private StatusEffect statusEffect;
+
+        public string ItemName
+        {
+            get => itemName;
+            set => itemName = value;
+        }
+
+        public Color ItemColor
+        {
+            get => itemColor;
+            set => itemColor = value;
+        }
+
+        public Sprite ItemSprite
+        {
+            get => itemSprite;
+            set => itemSprite = value;
+        }
+
+        public StatusEffect StatusEffect
+        {
+            get => statusEffect;
+            set => statusEffect = value;
+        }
     }
 }
