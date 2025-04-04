@@ -1,11 +1,11 @@
+
+-> loob_bahay
+
 // First Scene Dialogues for Bantay sa Dilim
 
 VAR doorClosedCount = 0
 VAR hasAcceptedRequest = false
 
--> loob_bahay
-
-=== loob_bahay ===
 #ChangeSection:Gumising
 #PlaySoundLoop:door-knocking
 #ChangeUI:Dialogue
@@ -13,6 +13,10 @@ VAR hasAcceptedRequest = false
 (Malakas na katok mula sa labas ng kubo.)
 #ChangeUI:
 #AddDelay:1
+-> loob_bahay
+
+=== loob_bahay ===
+#PlaySoundLoop:door-knocking
 #ChangeSection:Kumakatok
 #AddDelay:1
 #ChangeUI:Dialogue
@@ -123,8 +127,12 @@ Ito ang napapala ng mga taong hindi marunong tumulong sa kapwa!
 #ChangeSpeaker:Narrator
 (Nagkaroon ng masamang epekto ang desisyon ni Ibarra...)
      
-#ChangeSection:LabananMaria
-#ChangeUI:Combat
+#ChangeUI:
+#PlaySound:force-open
+#AddDelay:6
+#ChangeSection:NasiraPinto
+#AddDelay:2
+#ChangeUI:ToBeContinued
 -> DONE
     
 === tulungan_maria ===
@@ -150,6 +158,7 @@ Ah! May nabangga akong matandang babae. Parang may binulong siya bago siya umali
 Hmmm... Maaaring nakulam ka. Huwag kang mag-alala, may kakilala akong albularyo. Maghahanda muna ako bago tayo umalis.
 
 #ChangeUI:
+#PlaySound:close-door
 #ChangeSection:Pintuan
 #AddDelay:1
 #ChangeSection:Kumakatok
@@ -160,15 +169,17 @@ Hmmm... Maaaring nakulam ka. Huwag kang mag-alala, may kakilala akong albularyo.
 === kaliwa ===
 #PlaySound:wood-footsteps
 #ChangeSection:Kaliwa
-#ChangeUI:Dialogue
 #NextDialogue:
 
 { not hasAcceptedRequest:
 #PlaySoundLoop:door-knocking
+#AddDelay:1
+#ChangeUI:Dialogue
 #ChangeSpeaker:Ibarra
 Ang dilim na pala...
 }
 { hasAcceptedRequest:
+#ChangeUI:Dialogue
 #ChangeSpeaker:Ibarra
 Dumarami na naman ang kaso ng mga maligno...
 }
@@ -176,26 +187,35 @@ Dumarami na naman ang kaso ng mga maligno...
 
 === kanan ===
 #PlaySound:wood-footsteps
+#AddDelay:1
 #ChangeSection:Kanan
-#ChangeUI:Dialogue
 #NextDialogue:
 
 { not hasAcceptedRequest:
-#AddDelay:1
 #PlaySound:empty-stomach
+#ChangeUI:Dialogue
 #ChangeSpeaker:Ibarra
 Gutom na ako... (Tumutunog ang tiyan.)
 }
 { hasAcceptedRequest:
+#ChangeUI:Dialogue
 #ChangeSpeaker:Ibarra
 Hmm... Magagamit ko ba ito?
 }
 -> ikaapat_desisyon
 
 === ikaapat_desisyon ===
+#ReadyItems:Kanan
+#NextDialogue:
 + {not hasAcceptedRequest} Bumalik
+    #RemoveItems:Kanan
+    #PlaySound:wood-footsteps
+    #AddDelay:1
     ->  loob_bahay
 + {hasAcceptedRequest} Bumalik
+    #RemoveItems:Kanan
+    #PlaySound:wood-footsteps
+    #AddDelay:1
     #ChangeSection:Kumakatok
     #NextDialogue:
     -> unang_desisyon

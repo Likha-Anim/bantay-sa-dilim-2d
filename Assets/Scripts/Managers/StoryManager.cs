@@ -41,7 +41,7 @@ namespace Managers
             else if (_story.currentChoices.Count > 0)
             {
                 GameEvents.Instance.TriggerGameEvent("ChangeUI", "Choices");
-                GameEvents.Instance.TriggerGameEvent("TypeText", "Ano ang dapat gawin?");
+                GameEvents.Instance.TriggerGameEvent("TypeText", "Ano ang dapat kong gawin?");
                 GameEvents.Instance.TriggerGameEvent("ShowChoices", _story);
             }
         }

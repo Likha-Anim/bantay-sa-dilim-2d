@@ -53,6 +53,13 @@ namespace Managers
         // Initializes the text display for the current UI for the typing animation
         public void InitializeTextDisplay(string newUI)
         {
+            if (newUI == "ToBeContinued" || newUI == "Death")
+            {
+                newUI = $"Screen/{newUI}";
+                typingSpeed = 0.1f;
+            }
+            else typingSpeed = 0.03f;
+
             _textDisplay = Utilities.FindChild($"Overlay/{newUI}/Sentence")
                 .GetComponent<TextMeshProUGUI>();
         }

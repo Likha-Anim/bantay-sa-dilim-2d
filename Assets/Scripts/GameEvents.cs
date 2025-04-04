@@ -56,6 +56,11 @@ public class GameEvents : Singleton<GameEvents>
         _isPaused = shouldPause;
     }
 
+    public void ShowEndCredits()
+    {
+        Utilities.FindChild("EndCredits").gameObject.SetActive(true);
+    }
+
     // Queues the game event
     public void TriggerGameEvent(string eventName, params object[] args)
     {
@@ -94,6 +99,12 @@ public class GameEvents : Singleton<GameEvents>
             case "ShowChoices":
                 UIManager.Instance.ShowChoices(args[0] as Story);
                 break;
+            case "ReadyItems":
+                ItemsManager.Instance.InitializeItemsOnClick((string)args[0]);
+                break;
+            case "RemoveItems":
+                ItemsManager.Instance.UninitializeItemsOnLeave((string)args[0]);
+                break;
             case "PlaySound":
                 SoundManager.Instance.PlaySound((string)args[0]);
                 break;
@@ -103,7 +114,9 @@ public class GameEvents : Singleton<GameEvents>
             case "TypeText":
                 string text = args[0] as string;
                 yield return StartCoroutine(TypingManager.Instance.TypeText(text));
-                if (text != "Ano ang dapat gawin?") UIManager.Instance.ShowDialogueButton();
+                if (text == "To be continued...") UIManager.Instance.ShowScreenButton("ToBeContinued");
+                if (text == "You died.") UIManager.Instance.ShowScreenButton("Death");
+                if (text != "Ano ang dapat kong gawin?") UIManager.Instance.ShowDialogueButton();
                 break;
             case "ChangeSection":
                 yield return StartCoroutine(SectionManager.Instance.SwitchSection((string)args[0]));
@@ -112,8 +125,9 @@ public class GameEvents : Singleton<GameEvents>
             case "ChangeUI":
                 string type = (string)args[0];
                 UIManager.Instance.ChangeUI(type);
-                if (type != "" && !type.Contains("Screen")) TypingManager.Instance.InitializeTextDisplay(type);
-                if (type.Contains("Combat")) ShouldPause(true);
+                if (type != "" && type != "Combat") TypingManager.Instance.InitializeTextDisplay(type);
+                if (type == "ToBeContinued") TriggerGameEvent("TypeText", "To be continued...");
+                else if (type == "Death") TriggerGameEvent("TypeText", "You died.");
                 break;
             default:
                 Debug.LogWarning($"Unknown event: {eventName}");

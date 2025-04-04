@@ -5,6 +5,7 @@ using Ink.Runtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Managers
@@ -28,13 +29,13 @@ namespace Managers
         public void InitializeUI()
         {
             InitializeDialogueButton();
-            // InitializeScreen();
+            InitializeScreen();
         }
 
         // Changes the UI to the new UI
         public void ChangeUI(string newUI)
         {
-            if (!newUI.Contains("Screen")) ClearText();
+            if (newUI != "Combat") ClearText();
             if (_previousUI) _previousUI.SetActive(false);
             if (newUI == "") return;
             _previousUI = Utilities.FindChild(newUI).gameObject;
@@ -49,6 +50,14 @@ namespace Managers
                 Utilities.FindChild("Overlay/Dialogue/Speaker").GetComponent<TextMeshProUGUI>();
             speakerDisplay.color = character.color;
             speakerDisplay.text = character.name;
+        }
+
+        // Shows the screen button for the given screen
+        public void ShowScreenButton(string screenName)
+        {
+            GameEvents.Instance.ShouldPause(true);
+            var screenButton = Utilities.FindChild($"Overlay/Screen/{screenName}/Choice").GetComponent<Button>();
+            screenButton.gameObject.SetActive(true);
         }
 
         // Shows the dialogue button, used after the typing animation
@@ -98,6 +107,8 @@ namespace Managers
             Utilities.FindChild("Overlay/Dialogue/Speaker").GetComponent<TextMeshProUGUI>().text = "";
             Utilities.FindChild("Overlay/Dialogue/Sentence").GetComponent<TextMeshProUGUI>().text = "";
             Utilities.FindChild("Overlay/Choices/Sentence").GetComponent<TextMeshProUGUI>().text = "";
+            Utilities.FindChild("Overlay/Screen/ToBeContinued/Sentence").GetComponent<TextMeshProUGUI>().text = "";
+            Utilities.FindChild("Overlay/Screen/Death/Sentence").GetComponent<TextMeshProUGUI>().text = "";
         }
 
         // Initializes the dialogue button for the current scene
@@ -117,11 +128,12 @@ namespace Managers
         // Initializes the screens button for the current scene
         private void InitializeScreen()
         {
-            var startButton = Utilities.FindChild("Overlay/Screen/Start/Choice").GetComponent<Button>();
-            startButton.onClick.AddListener(() =>
+            var continueButton = Utilities.FindChild("Overlay/Screen/ToBeContinued/Choice").GetComponent<Button>();
+            continueButton.onClick.AddListener(() =>
             {
                 ClearPreviousUI();
                 GameEvents.Instance.ShouldPause(false);
+                GameEvents.Instance.ShowEndCredits();
                 EventSystem.current.SetSelectedGameObject(null);
             });
 
@@ -130,6 +142,7 @@ namespace Managers
             {
                 ClearPreviousUI();
                 GameEvents.Instance.ShouldPause(false);
+                GameEvents.Instance.TriggerGameEvent("ChangeScene", SceneManager.GetActiveScene().name);
                 EventSystem.current.SetSelectedGameObject(null);
             });
         }
